@@ -11,13 +11,13 @@ library(vroom)
 
 #import loan data
 ##small loans
-under_names <- paste("data/", list.files(path = "data/", pattern = "^foia_up_to_150k_", recursive = TRUE), sep = "") #list files smaller than $150k
+under_names <- paste("data/", list.files(path = "data/", pattern = "up to 150k", recursive = TRUE), sep = "") #list files smaller than $150k
 under <- vroom(file = under_names[1], col_types = c("ncfcfffffcnfcc")) #create initial tibble
 for (i in seq_along(under_names[2:57])) { #append the rest
   under <- bind_rows(under, vroom(file = under_names[i], col_types = c("ncfcfffffcnfcc")))
 }
 ##aggregate loans
-all_loans <- bind_rows(under, vroom(file = "data/150k plus/foia_150k_plus.csv", col_types = c("ccccfcffffffnccc"))) %>% #quickly import loans larger than $150,000
+all_loans <- bind_rows(under, vroom(file = "data/150k plus/PPP data 150k plus.csv", col_types = c("ccccfcffffffnccc"))) %>% #quickly import loans larger than $150,000
   mutate(DateApproved = mdy(DateApproved), #convert DateApproved to date format
          NonProfit = ifelse(is.na(NonProfit), FALSE, TRUE), #convert non-profit to type logical
          LoanRange = ifelse(is.na(LoanRange), "", as.character(factor(LoanRange, levels = c("e $150,000-350,000", "d $350,000-1 million", "c $1-2 million", "b $2-5 million", "a $5-10 million"), labels = c("$150k-$350k", "$350k-$1m", "$1m-$2m", "$2m-$5m", "$5m-$10m")))), #create factor from character

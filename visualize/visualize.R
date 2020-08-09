@@ -77,8 +77,9 @@ all_loans %>%
   filter(RaceEthnicity != "Unanswered") %>%
   ggplot(aes(DateApproved)) +
   geom_bar(aes(fill = RaceEthnicity)) +
-  annotate("rect", xmin = as.Date("2020-04-17"), xmax = as.Date("2020-04-26"), ymin = -Inf, ymax = Inf, alpha = .2) +
+  annotate("rect", xmin = as.Date("2020-04-17"), xmax = as.Date("2020-04-26"), ymin = -Inf, ymax = Inf, alpha = .1, fill = "#4a4a4a") +
+  annotate("text", x = as.Date("2020-04-24"), y = 20000, label = "First round funds exhausted", angle = 90, color = "#4a4a4a") +
   scale_y_continuous(labels = scales::comma) +
   scale_fill_manual(values = wesanderson::wes_palette("Royal2")) +
   scale_x_date(date_breaks = "2 weeks", date_labels = "%B %d") + #increase frequency of x axis ticks (1 week = 1 year in COVID)
-  labs(x = "Date approved", y = "Loans", title = "Race or ethnicity of loan applicants over time", subtitle = "Note: gap due to exhaustion of initial funds; 89% of applicants did not report race or ethnicity", caption = "Source: Small Business Administration", fill = "Race or ethnicity")
+  labs(x = "Date approved", y = "Loans", title = "Race or ethnicity of loan applicants over time", subtitle = "Note: 89% of applicants did not report race or ethnicity", caption = "Source: Small Business Administration", fill = "Race or ethnicity")

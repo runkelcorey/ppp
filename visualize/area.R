@@ -19,7 +19,8 @@ ggplot(all_loans, aes(DateApproved, fill = LoanRange)) +
   geom_area(stat = "count") + #define y aesthetic as a count of loans
   scale_x_date(date_breaks = "2 weeks", date_labels = "%B %d", expand = expansion(mult = .01)) + #increase frequency of x axis ticks (1 week = 1 year in COVID)
   scale_y_continuous(labels = scales::comma) + #prevent scientific notation
-  labs(x = "Approval date", y = "Number of loans", title = "Distribution of 4,931,453 PPP loan approvals", subtitle = "April 3, 2020 - June 30, 2020", caption = "Source: Small Business Association", fill = "Loan range")
+  labs(x = "Approval date", y = "Number of loans", title = "Distribution of 4,931,453 PPP loan approvals", subtitle = "April 3, 2020 - June 30, 2020", caption = "Source: Small Business Association", fill = "Loan range") +
+
 ##percentage: loan-range-percentage
 all_loans %>%
   group_by(DateApproved, LoanRange) %>%
@@ -30,12 +31,14 @@ all_loans %>%
   ungroup() %>%
   ggplot(aes(DateApproved, y = freq/dailyfreq, fill = LoanRange)) + #plot portion of loans per range every day
   geom_area() + #use area plot (default is stacked areas)
+  annotate("rect", xmin = as.Date("2020-04-17"), xmax = as.Date("2020-04-26"), ymin = -Inf, ymax = Inf, alpha = .4, fill = "#f9f9f9") +
+  annotate("text", x = as.Date("2020-04-24"), y = .66, label = "First round funds exhausted", angle = 90, color = "#4a4a4a") +
   scale_x_date(date_breaks = "2 weeks", date_labels = "%B %d", expand = expansion(mult = .01)) + #increase frequency of x axis ticks (1 week = 1 year in COVID)
   scale_y_continuous(labels = scales::percent) + #label axes by percent
   labs(x = "Approval date", y = "Percentage of daily loans", title = "Daily distribution of 4,931,453 PPP loan approvals", subtitle = "April 3, 2020 - June 30, 2020", caption = "Source: Small Business Association", fill = "Loan range")
 
 #cdfi vs. noncdfi lenders: cdfi-race
-read_csv("ppp/data/cdfis.csv") %>%
+p <- read_csv("ppp/data/cdfis.csv") %>%
   separate(Lender, c("Lender", NA), sep = " d/b/a", remove = TRUE) %>% #remove anything after d/b/a in lender name
   mutate(Lender = str_remove_all(Lender, ", National Association"), CDFI = "CDFI") %>% #remove national association
   right_join(all_loans, ignore_case = TRUE) %>% #ignore case
